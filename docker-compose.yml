@@ -1,0 +1,25 @@
+version: '3'
+services:
+  gocd-server:
+    image: gocd/gocd-server:v19.2.0
+    container_name: gocdserver
+    hostname: server
+    ports:
+    - 8153:8153
+    - 8154:8154
+    volumes:
+    - ./gocdserver-data:/godata
+  gocd-agent:
+    image: gocd/gocd-agent-ubuntu-18.04:v19.2.0
+    container_name: gocdagent
+    hostname: agent
+    volumes:
+    - ./gocdagent-data:/godata
+    environment:
+      AGENT_AUTO_REGISTER_HOSTNAME: 'agent01'
+      AGENT_AUTO_REGISTER_KEY: 'abacatekey'
+      AGENT_AUTO_REGISTER_RESOURCES: 'java'
+      AGENT_AUTO_REGISTER_ENVIRONMENTS: 'test'
+      GO_SERVER_URL: 'https://gocd-server:8154/go'
+    links:
+      - gocd-server
